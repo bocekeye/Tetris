@@ -12,7 +12,7 @@ MinoManager::MinoManager():
 	m_isMoveRight(false),
 	m_isMoveLeft(false),
 	m_isFallTheBottom(false),
-	m_random(0)
+	m_random(MinoType::square)
 {	
 	for (int y = 0; y < Map::kMapY; y++)
 	{
@@ -237,17 +237,47 @@ void MinoManager::init()
 
 void MinoManager::update()
 {
-	if (m_fallInterval++ >= 30)
-	{
-		m_indexY += 1;
-		/*if (isMoveBelow())
+
+	if (Pad::isTrigger(PAD_INPUT_DOWN))
+	{	
+		if (isMoveBelow())
 		{
-			m_pMap->testErase(m_indexX, m_indexY);
-			
-		}*/
+			m_indexY++;
+		}
+		else
+		{
+			for (int y = 0; y < 4; y++)
+			{
+				for (int x = 0; x < 4; x++)
+				{
+					if (m_minoData[m_random].shape[x][y] == 1)
+					{
+						int posX = x + m_indexX;
+						int posY = y + m_indexY;
+						m_pMap->setBlock(posX, posY);
+					}
+				}
+			}
+
+			create();
+		}
+	
+	}
+	
+#if false
+	if (m_fallInterval++ >= 60)
+	{
+		//	m_indexY += 1;
+		for (int y = 0; y < 4; y++)
+		{
+			for (int x = 0; x < 4; x++)
+			{
+				m_minoData[m_random].shape[x][y] = 1;
+			}
+		}
+
 		m_fallInterval = 0;
 	}
-
 	if (Pad::isTrigger(PAD_INPUT_RIGHT))
 	{
 		if (isMoveRight())
@@ -273,11 +303,15 @@ void MinoManager::update()
 			m_indexY += 1;
 		}
 	}
-	m_pMap->setBlock(m_indexX, m_indexY);
+#endif
+//	m_pMap->setBlock(m_indexX, m_indexY);
 	//m_pMap->erase();
 
-	create();
+	
 //	erase();
+
+	
+
 }
 
 void MinoManager::draw()
@@ -300,11 +334,11 @@ void MinoManager::draw()
 	{
 		for (int x = 0; x < 4; x++)
 		{
-			if (m_minoData[m_random].shape[x][y] == 1)
+			if (testTypeAndIsThere(x,y))
 			{
 				int posX = (m_indexX + x) * Map::kMapSize;
 				int posY = (m_indexY + y) * Map::kMapSize;
-				DrawBox(posX, posY + 100, posX + Map::kMapSize, y * Map::kMapSize + 100 + Map::kMapSize, 0xff0000, true);
+				DrawBox(posX, posY + 100, posX + Map::kMapSize, posY + 100 + Map::kMapSize, 0xff0000, true);
 			}
 		}
 	}
@@ -327,14 +361,14 @@ void MinoManager::draw()
 
 void MinoManager::create()
 {
-	if (isFallTheBottom() /* || !isMoveBelow()*/)
+	if (!isMoveBelow())
 	{
 		//ランダム計算
 		std::random_device rd;
 		std::mt19937 mt(rd());
 		//0～6までの数字をランダム生成
 		std::uniform_int_distribution<int> rdt(MinoType::T, MinoType::hen2);
-		m_random = rdt(mt);
+	//	m_random = rdt(mt);
 
 		m_indexX = 4;
 		m_indexY = 0;
@@ -360,31 +394,59 @@ bool MinoManager::isFallTheBottom()
 /// <returns></returns>
 bool MinoManager::isMoveBelow()
 {
-	//移動制限
+#if true
+	//いずれかがの条件(？)
+	for (int y = 0; y < 4; y++)
+	{
+		for (int x = 0; x < 4; x++)
+		{
+			if (testTypeAndIsThere(x, y))
+			{
+				int posX = (m_indexX + x);
+				int posY = (m_indexY + y);
+
+				//移動制限
+				if (posY >= Map::kMapY - 2)
+				{
+					return false;
+				}
+				//1つ下にブロックがあった場合
+				if (m_pMap->isBlock(posX, posY + 1))
+				{
+					return false;
+				}
+
+				return true;
+			}
+		}
+	}	
+#else
 	if (m_indexY >= Map::kMapY - 1)
 	{
 		return false;
 	}
 	//1つ下にブロックがあった場合
-	if (m_pMap->isBlock(m_indexX,m_indexY + 1))
+	if (m_pMap->isBlock(m_indexX, m_indexY + 1))
 	{
 		return false;
 	}
 	return true;
+#endif
+	
+
 }
 
-bool MinoManager::testTypeAndIsThere()
+
+bool MinoManager::testTypeAndIsThere(int x, int y)
 {
-	for (int y = 0; y < 4; y++)
+	int posX = x + m_indexX;
+	int posY = y + m_indexY;
+
+	if (m_minoData[m_random].shape[x][y] == 1)
 	{
-		for (int x = 0; x < 4; x++)
-		{
-			if (m_minoData[m_random].shape[x][y] == 1)
-			{
-				return true;
-			}
-		}
+		return true;
 	}
+
 	return false;
 }
 

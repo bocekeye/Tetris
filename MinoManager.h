@@ -26,7 +26,7 @@ public:
 	//1ŒÂ‰º‚ÉƒuƒƒbƒN‚ª‚ ‚é‚©‚Ç‚¤‚©
 	bool isMoveBelow();
 
-	bool testTypeAndIsThere();
+	bool testTypeAndIsThere(int x, int y);
 
 	//1—ñ‘µ‚Á‚½‚çÁ‚·
 	void erase();
