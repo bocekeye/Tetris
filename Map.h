@@ -14,7 +14,9 @@ public:
 	void setBlock(int x,int y);
 	void erase();
 
-	void testErase(int x, int y);
+	//‰º‚É—Ž‚Æ‚·
+	void lower();
+
 
 public:
 	static const int kMapX = 10;		//‰¡
@@ -25,7 +27,7 @@ private:
 	int m_map[kMapX][kMapY];
 
 	int m_count;				//1—ñ‚Éƒ~ƒm‚ª‰½ŒÂ‚ ‚é‚©
-	bool m_isTest;
+	bool m_isLineUP = false;
 
 };
 

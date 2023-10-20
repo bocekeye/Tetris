@@ -28,13 +28,12 @@ public:
 
 	bool testTypeAndIsThere(int x, int y);
 
-	//1列揃ったら消す
-	void erase();
-
 	bool isMoveRight();
 	bool isMoveLeft();
 
-	void lower();
+	bool isRotate();
+
+	void createColor(int randomNum);
 
 
 private:
@@ -67,9 +66,9 @@ private:
 	{
 		int shape[4][4];
 
-		int shape_90[4][4];
-		int shape_180[4][4];
-		int shape_270[4][4];
+		int shape90[4][4];
+		int shape180[4][4];
+		int shape270[4][4];
 	};
 
 
@@ -95,4 +94,8 @@ private:
 
 	int m_count;				//1列にミノが何個あるかの数
 	int m_random;				//生成されたランダムの数
+
+	int m_rotateNum;			//回転状態用の数
+
+	int m_color;				//色
 };

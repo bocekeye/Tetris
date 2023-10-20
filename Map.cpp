@@ -31,9 +31,18 @@ void Map::draw()
 	{
 		for (int x = 0; x < kMapX; x++)
 		{
-			DrawBox(0,100,x * kMapSize + kMapSize,y * kMapSize + kMapSize + 100,0xffffff,false);
+			if (m_map[x][y] == 1)
+			{
+				int posX = x * kMapSize;
+				int posY = y * kMapSize;
+				DrawBox(posX + 100, posY + 100, posX + kMapSize + 100, posY + 100 + kMapSize, 0xff0000, true);
+			}
+
+			DrawBox(100,100,x * kMapSize + kMapSize + 100,y * kMapSize + kMapSize + 100,0xffffff,false);
 		}
 	}
+
+//	DrawFormatString(500, 100, 0xffffff, "m_count = %d", m_count);
 }
 
 /// <summary>
@@ -60,7 +69,7 @@ void Map::erase()
 {
 	//Yç¿ïWï€ë∂
 	int strageY = 0;
-	for (int y = 0; y < Map::kMapY; y++)
+	for (int y = Map::kMapY - 1; y > 0 ; y--)
 	{
 		m_count = 0;
 		for (int x = 0; x < Map::kMapX; x++)
@@ -68,22 +77,42 @@ void Map::erase()
 			if (m_map[x][y] == 1)
 			{
 				m_count += 1;
-				strageY = y;
+				printfDx("%d\n", m_count);
+				if (m_count == 10)
+				{
+					m_isLineUP = true;
+					strageY = y;
+				}
 			}
 		}
 	}
 	//àÍóÒëµÇ¡ÇΩÇÁÇªÇÃóÒÇè¡Ç∑
-	if (m_count == 10)
+	if (m_isLineUP)
 	{
 		for (int x = 0; x < Map::kMapX; x++)
 		{
 			m_map[x][strageY] = 0;
 		}
+		lower();
+		m_isLineUP = false;
 	}
-
+	
 }
 
-void Map::testErase(int x, int y)
+void Map::lower()
 {
-	m_map[x][y] = 0;
+	for (int y = Map::kMapY - 2; y > 0; y--)
+	{
+		for (int x = 0; x < Map::kMapX; x++)
+		{
+			if (m_map[x][y] == 1)
+			{
+				if (m_map[x][y + 1] == 0)
+				{
+					m_map[x][y] = 0;
+					m_map[x][y + 1] = 1;
+				}
+			}
+		}
+	}
 }
