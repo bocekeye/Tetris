@@ -27,10 +27,10 @@ void Map::update()
 
 void Map::draw()
 {
-	//˜g
-	for (int y = 0; y < kMapY; y++)
+	//˜g 
+	for (int x = 0; x < kMapX; x++)
 	{
-		for (int x = 0; x < kMapX; x++)
+		for (int y = 0; y < kMapY; y++)
 		{
 			if (m_map[x][y] == 1)
 			{

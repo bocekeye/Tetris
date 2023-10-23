@@ -1,11 +1,10 @@
-#include <DxLib.h>
+
 #include "Pad.h"
 #include "game.h"
 
 #include "MinoManager.h"
 #include "Map.h"
-
-
+#include <DxLib.h>
 
 // ƒvƒƒOƒ‰ƒ€‚Í WinMain ‚©‚çn‚Ü‚è‚Ü‚·
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)

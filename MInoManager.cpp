@@ -232,7 +232,7 @@ void MinoManager::init()
 
 void MinoManager::update()
 {
-	if (m_fallInterval++ >= 60)
+	if (m_fallInterval++ >= 30)
 	{
 		if (isMoveBelow())
 		{
@@ -240,9 +240,9 @@ void MinoManager::update()
 		}
 		else
 		{
-			for (int y = 0; y < 4; y++)
+			for (int x = 0; x < 4; x++)
 			{
-				for (int x = 0; x < 4; x++)
+				for (int y = 0; y < 4; y++)
 				{
 					if (testTypeAndIsThere(x, y))
 					{
@@ -266,9 +266,9 @@ void MinoManager::update()
 		}
 		else
 		{
-			for (int y = 0; y < 4; y++)
+			for (int x = 0; x < 4; x++)
 			{
-				for (int x = 0; x < 4; x++)
+				for (int y = 0; y < 4; y++)
 				{
 					if (testTypeAndIsThere(x, y))
 					{
@@ -325,19 +325,12 @@ void MinoManager::draw()
 				int posY = (m_indexY + y) * Map::kMapSize;
 				DrawBox(posX + 100, posY + 100, posX + Map::kMapSize + 100, posY + 100 + Map::kMapSize, m_color, true);
 			}
-			//–{‘Ì‚Å‚Í‚È‚¢‰Šú‰»‚Å’è‹`‚µ‚½“ñŽŸŒ³”z—ñ‚Ì"0"‚Ì•”•ª
-			/*else
-			{
-				int posX = (m_indexX + x) * Map::kMapSize;
-				int posY = (m_indexY + y) * Map::kMapSize;
-				DrawBox(posX + 100, posY + 100, posX + Map::kMapSize + 100, posY + 100 + Map::kMapSize, 0xffffff, true);
-			}*/
 		}
 	}
 
 #ifdef _DEBUG
 
-	DrawFormatString(500, 60, 0xffffff, "m_indexX = %d", m_indexX);
+	/*DrawFormatString(500, 60, 0xffffff, "m_indexX = %d", m_indexX);
 	DrawFormatString(500, 80, 0xffffff, "m_indexY = %d", m_indexY);
 
 	if (isRotate())
@@ -349,7 +342,7 @@ void MinoManager::draw()
 		DrawString(500, 120, "‰ñ“] = FALSE", 0xffffff);
 	}
 	DrawFormatString(500, 140, 0xffffff, "m_random = %d", m_random);
-	DrawFormatString(500, 160, 0xffffff, "m_rotateNum = %d", m_rotateNum);
+	DrawFormatString(500, 160, 0xffffff, "m_rotateNum = %d", m_rotateNum);*/
 
 #endif
 }
@@ -361,16 +354,13 @@ void MinoManager::create()
 	std::mt19937 mt(rd());
 	//0`6‚Ü‚Å‚Ì”Žš‚ðƒ‰ƒ“ƒ_ƒ€¶¬
 	std::uniform_int_distribution<int> rdt(MinoType::T, MinoType::Z);
-
 	m_indexX = 4;
 	m_indexY = 0;
 	m_rotateNum = 0;
-	m_random = MinoType::T;
+	//m_random = MinoType::T;
 	//m_random = MinoType::I;
-	//m_random = rdt(mt);
+	m_random = rdt(mt);
 	createColor(m_random);
-
-	
 }
 
 /// <summary>
@@ -380,9 +370,9 @@ void MinoManager::create()
 bool MinoManager::isMoveBelow()
 {
 	//‚¢‚¸‚ê‚©‚ª‚ÌðŒ(H)
-	for (int y = 3; y >= 0; y--)
+	for (int x = 0; x < 4; x++)
 	{
-		for (int x = 0; x < 4; x++)
+		for (int y = 0; y < 4; y++)
 		{
 			if (testTypeAndIsThere(x, y))
 			{
@@ -411,9 +401,9 @@ bool MinoManager::isMoveBelow()
 /// <returns></returns>
 bool MinoManager::isMoveRight()
 {
-	for (int y = 0; y < 4; y++)
+	for (int x = 0; x < 4; x++)
 	{
-		for (int x = 0; x < 4; x++)
+		for (int y = 0; y < 4; y++)
 		{
 			if (testTypeAndIsThere(x, y))
 			{
@@ -441,9 +431,9 @@ bool MinoManager::isMoveRight()
 /// <returns></returns>
 bool MinoManager::isMoveLeft()
 {
-	for (int y = 0; y < 4; y++)
+	for (int x = 0; x < 4; x++)
 	{
-		for (int x = 0; x < 4; x++)
+		for (int y = 0; y < 4; y++)
 		{
 			if (testTypeAndIsThere(x, y))
 			{
@@ -475,9 +465,9 @@ bool MinoManager::isRotate()
 	int posY = 0;
 
 	//‰ñ“]ó‘Ô‚Ì”‚©‚çŽŸ‚Ì‰ñ“]‚Ìó‘Ô‚ðŒ©‚é
-	for (int y = 0; y < 4; y++)
+	for (int x = 0; x < 4; x++)
 	{
-		for (int x = 0; x < 4; x++)
+		for (int y = 0; y < 4; y++)
 		{
 			if (m_rotateNum == 0)
 			{
@@ -513,11 +503,11 @@ bool MinoManager::isRotate()
 						return false;
 					}
 					//‰æ–ÊŠO
-					if (posX < 0)
+					if (posX <= 0)
 					{
 						return false;
 					}
-					if (posX > Map::kMapX - 1)
+					if (posX >= Map::kMapX - 1)
 					{
 						return false;
 					}
@@ -539,11 +529,11 @@ bool MinoManager::isRotate()
 						return false;
 					}
 					//‰æ–ÊŠO
-					if (posX < 0)
+					if (posX <= 0)
 					{
 						return false;
 					}
-					if (posX > Map::kMapX - 1)
+					if (posX >= Map::kMapX - 1)
 					{
 						return false;
 					}
@@ -565,11 +555,11 @@ bool MinoManager::isRotate()
 						return false;
 					}
 					//‰æ–ÊŠO
-					if (posX < 0)
+					if (posX <= 0)
 					{
 						return false;
 					}
-					if (posX > Map::kMapX - 1)
+					if (posX >= Map::kMapX - 1)
 					{
 						return false;
 					}
@@ -619,33 +609,30 @@ void MinoManager::createColor(int randomNum)
 
 bool MinoManager::testTypeAndIsThere(int x, int y)
 {
-	int posX = x + m_indexX;
-	int posY = y + m_indexY;
-
 	if (m_rotateNum == 0)
 	{
-		if (m_minoData[m_random].shape[x][y] == 1)
+		if (m_minoData[m_random].shape[y][x] == 1)
 		{
-			return true;
+ 			return true;
 		}
 	}
 	else if (m_rotateNum == 1)
 	{
-		if (m_minoData[m_random].shape90[x][y] == 1)
+		if (m_minoData[m_random].shape90[y][x] == 1)
 		{
 			return true;
 		}
 	}
 	else if (m_rotateNum == 2)
 	{
-		if (m_minoData[m_random].shape180[x][y] == 1)
+		if (m_minoData[m_random].shape180[y][x] == 1)
 		{
 			return true;
 		}
 	}
 	else if (m_rotateNum == 3)
 	{
-		if (m_minoData[m_random].shape270[x][y] == 1)
+		if (m_minoData[m_random].shape270[y][x] == 1)
 		{
 			return true;
 		}
