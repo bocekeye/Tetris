@@ -1,4 +1,5 @@
 #include "Map.h"
+#include "MinoManager.h"
 #include <DxLib.h>
 
 Map::Map()
@@ -35,9 +36,12 @@ void Map::draw()
 			{
 				int posX = x * kMapSize;
 				int posY = y * kMapSize;
+
 				DrawBox(posX + 100, posY + 100, posX + kMapSize + 100, posY + 100 + kMapSize, 0xff0000, true);
+
 			}
 
+			int Frame = kMapSize + 1;
 			DrawBox(100,100,x * kMapSize + kMapSize + 100,y * kMapSize + kMapSize + 100,0xffffff,false);
 		}
 	}
@@ -60,9 +64,10 @@ bool Map::isBlock(int x, int y)
 	return false;
 }
 
-void Map::setBlock(int x, int y)
+void Map::setBlock(int x, int y,int color)
 {
 	m_map[x][y] = 1;
+	m_color = color;
 }
 
 void Map::erase()
@@ -115,4 +120,9 @@ void Map::lower()
 			}
 		}
 	}
+}
+
+void Map::getColor(int color)
+{
+	m_color = color;
 }

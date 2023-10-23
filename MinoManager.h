@@ -20,8 +20,6 @@ public:
 
 	//新しいミノを生成する
 	void create();
-	//1番下に落ちたかどうか
-	bool isFallTheBottom();
 
 	//1個下にブロックがあるかどうか
 	bool isMoveBelow();
@@ -36,8 +34,7 @@ public:
 	void createColor(int randomNum);
 
 
-private:
-
+public:
 
 	enum
 	{
@@ -56,8 +53,8 @@ private:
 		J,
 		I,
 		square,
-		hen1,
-		hen2,
+		S,
+		Z,
 
 		MinoMax
 	};
@@ -65,18 +62,15 @@ private:
 	struct MinoData
 	{
 		int shape[4][4];
-
 		int shape90[4][4];
 		int shape180[4][4];
 		int shape270[4][4];
 	};
 
 
-	int m_minoNum;				//ミノの生成のナンバー
+	//int m_minoNum;				//ミノの生成のナンバー
 
 	MinoData m_minoData[MinoMax];
-
-	int test[10][20];
 
 private:
 
