@@ -87,7 +87,7 @@ void Map::erase()
 			if (m_map[x][y] == 1)
 			{
 				m_count += 1;
-				printfDx("%d\n", m_count);
+			//	printfDx("%d\n", m_count);
 				if (m_count == 10)
 				{
 					m_isLineUP = true;

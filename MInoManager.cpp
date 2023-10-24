@@ -304,16 +304,12 @@ void MinoManager::update()
 		{
 			if (!m_isTest)
 			{
+			
 				m_rotateNum += 1;
-				//testPosX = 0;
 			}
 			else
 			{
-				if (m_rotateNum == 3)
-				{
-
-				}
-				m_indexX += testPosX;
+				//m_indexX += testPosX;
 				m_rotateNum += 1;
 			}
 		}
@@ -374,7 +370,7 @@ void MinoManager::draw()
 			//本体
 			if (testTypeAndIsThere(x, y))
 			{
-				int posX = (m_indexX + x + testPosX) * Map::kMapSize;
+				int posX = (m_indexX + x) * Map::kMapSize;
 				int posY = (m_indexY + y) * Map::kMapSize;
 				DrawBox(posX + 100, posY + 100, posX + Map::kMapSize + 100, posY + 100 + Map::kMapSize, m_color, true);
 			}
@@ -387,6 +383,7 @@ void MinoManager::draw()
 	DrawFormatString(500, 120, 0xffffff, "m_indexY = %d", m_indexY);
 	DrawFormatString(500, 140, 0xffffff, "m_random = %d", m_random);
 	DrawFormatString(500, 160, 0xffffff, "m_rotateNum = %d", m_rotateNum);
+	DrawFormatString(500, 180, 0xffffff, "testPosX = %d", testPosX);
 
 	if (isRotate())
 	{
@@ -398,11 +395,11 @@ void MinoManager::draw()
 	}
 	if (m_isTest)
 	{
-		DrawString(500, 220, "ずらし = TRUE", 0xffffff);
+		DrawString(500, 220, "m_isTest = TRUE", 0xffffff);
 	}
 	else
 	{
-		DrawString(500, 220, "ずらし = FALSE", 0xffffff);
+		DrawString(500, 220, "m_isTest = FALSE", 0xffffff);
 	}
 
 #endif
@@ -526,6 +523,8 @@ bool MinoManager::isRotate()
 	int kariPosY = 0;
 	int testX = 0; 
 	int testY = 0;
+	testPosX = 0;
+	m_isTest = false;
 
 	//struct indexData
 	//{
@@ -550,39 +549,25 @@ bool MinoManager::isRotate()
 		for (int x = 0; x < 4; x++)
 		{
 			//次の回転先の状態で比べる
-			if (getRotateMinoData(x, y, m_rotateNum + 1) == 1)
+			if (getRotateMinoData(x, y, m_rotateNum) == 1)
 			{
 				int posX = x + m_indexX;
 				int posY = y + m_indexY;
-				m_isTest = false;
 				//ブロックがある場合
 				if (m_pMap->isBlock(posX, posY))
 				{
 					return false;
 				}
 				//画面外
-				if (testX < 0)
+				if (posX < 0)
 				{
 					return false;
 				}
 				if (posX > Map::kMapX - 1)
-				{
-					//testPosX = posX - Map::kMapX - 1;
-					//return false;
-					//kariPosX = m_indexX - 1;
-					//kariPosY = m_indexY + 1;
-					//if (m_pMap->isBlock(kariPosX, kariPosY))
-					//{
-					//	return false;
-					//}
-					////左に1つずらす(回転可能)
-					//else
-					//{
-					//	
-					//}
-					
-					//(仮) m_indexXが７
+				{	
+			//(仮) m_indexXが7でx = 3(4x4の一番右)の場合10になる
 					testPosX = posX - Map::kMapX - 1;
+					m_indexX += testPosX;
 					m_isTest = true;
 				}
 			}
@@ -628,12 +613,11 @@ bool MinoManager::testTypeAndIsThere(int x, int y)
 int MinoManager::getRotateMinoData(int x, int y,int rotateNum)
 {
 	int data = 0;
-	if (rotateNum > 3)
+	if (rotateNum == 0)
 	{
-		rotateNum = 0;
+		data = m_minoData[m_random].shape[y][x];
 	}
-
-	if(rotateNum == 1)
+	else if(rotateNum == 1)
 	{
 		data = m_minoData[m_random].shape90[y][x];
 	}
@@ -645,10 +629,7 @@ int MinoManager::getRotateMinoData(int x, int y,int rotateNum)
 	{
 		data = m_minoData[m_random].shape270[y][x];
 	}
-	else if (rotateNum == 0)
-	{
-		data = m_minoData[m_random].shape[y][x];
-	}
+	
 
 	return data;
 }
