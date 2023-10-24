@@ -19,6 +19,10 @@ void Map::init()
 			m_map[x][y] = 0;
 		}
 	}
+	for (int y = 8; y < kMapY; y++)
+	{
+		m_map[7][y] = 1;
+	}
 }
 
 void Map::update()
@@ -66,6 +70,7 @@ bool Map::isBlock(int x, int y)
 
 void Map::setBlock(int x, int y,int color)
 {
+
 	m_map[x][y] = 1;
 	m_color = color;
 }

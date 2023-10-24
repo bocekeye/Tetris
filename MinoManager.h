@@ -23,11 +23,13 @@ public:
 
 	//1個下にブロックがあるかどうか
 	bool isMoveBelow();
+	bool isMoveRight();
+	bool isMoveLeft();
+
 
 	bool testTypeAndIsThere(int x, int y);
 
-	bool isMoveRight();
-	bool isMoveLeft();
+	int getRotateMinoData(int x, int y, int rotateNum);
 
 	bool isRotate();
 
@@ -92,4 +94,9 @@ private:
 	int m_rotateNum;			//回転状態用の数
 
 	int m_color;				//色
+
+	bool m_isTest = false;
+	bool m_isFallContinue = false;
+
+	int testPosX = 0;
 };
