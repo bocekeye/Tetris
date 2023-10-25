@@ -114,10 +114,10 @@ void MinoManager::init()
 	m_minoData[MinoType::I] =
 	{
 		{
-			{1,0,0,0},
-			{1,0,0,0},
-			{1,0,0,0},
-			{1,0,0,0},
+			{0,1,0,0},
+			{0,1,0,0},
+			{0,1,0,0},
+			{0,1,0,0},
 		},
 		{
 			{0,0,0,0},
@@ -415,8 +415,8 @@ void MinoManager::create()
 	m_indexY = 0;
 	m_rotateNum = 0;
 	//m_random = MinoType::J;
-	//m_random = MinoType::I;
-	m_random = rdt(mt);
+	m_random = MinoType::I;
+	//m_random = rdt(mt);
 	createColor(m_random);
 }
 
@@ -537,15 +537,15 @@ bool MinoManager::isRotate()
 				//ブロックがある場合
 				if (m_pMap->isBlock(posX, posY))
 				{
-					return false;
-					//if (m_pMap->isBlock(m_indexX - 1, m_indexY))
-					//{
-					//	return false;
-					//}
-					//else
-					//{
-					//	m_indexX += -1;
-					//}
+					//次の回転の状態を取得してそこにブロックが置かれていなかったら
+					// 回転できるようにする？
+					//return false;
+					/*testPosX = m_indexX - posX + 1;
+					m_isTest = true;
+				    if (m_pMap->isBlock(m_indexX + testPosX, posY))
+					{
+						return false;
+					}*/
 				}
 				//画面外
 				if (posX < 0)
