@@ -114,28 +114,28 @@ void MinoManager::init()
 	m_minoData[MinoType::I] =
 	{
 		{
-			{1,1,1,1},
-			{0,0,0,0},
-			{0,0,0,0},
-			{0,0,0,0},
+			{1,0,0,0},
+			{1,0,0,0},
+			{1,0,0,0},
+			{1,0,0,0},
 		},
 		{
-			{0,1,0,0},
-			{0,1,0,0},
-			{0,1,0,0},
-			{0,1,0,0},
-		},
-		{
+			{0,0,0,0},
 			{0,0,0,0},
 			{1,1,1,1},
 			{0,0,0,0},
-			{0,0,0,0},
 		},
 		{
 			{0,1,0,0},
 			{0,1,0,0},
 			{0,1,0,0},
 			{0,1,0,0},
+		},
+		{
+			{0,0,0,0},
+			{1,1,1,1},
+			{0,0,0,0},
+			{0,0,0,0},
 		},
 	};
 	//	else if (m_minoNum == MinoType::square)
@@ -232,7 +232,7 @@ void MinoManager::init()
 
 void MinoManager::update()
 {
-	/*if (m_fallInterval++ >= 60)
+	if (m_fallInterval++ >= 60)
 	{
 		if (isMoveBelow())
 		{
@@ -255,7 +255,7 @@ void MinoManager::update()
 			create();
 		}
 		m_fallInterval = 0;
-	}*/
+	}
 
 
 	if (Pad::isTrigger(PAD_INPUT_DOWN))
@@ -303,13 +303,12 @@ void MinoManager::update()
 		if (isRotate())
 		{
 			if (!m_isTest)
-			{
-			
+			{		
 				m_rotateNum += 1;
 			}
 			else
 			{
-				//m_indexX += testPosX;
+				m_indexX += testPosX;
 				m_rotateNum += 1;
 			}
 		}
@@ -415,9 +414,9 @@ void MinoManager::create()
 	m_indexX = 4;
 	m_indexY = 0;
 	m_rotateNum = 0;
-	//m_random = MinoType::S;
-	m_random = MinoType::I;
-	//m_random = rdt(mt);
+	//m_random = MinoType::J;
+	//m_random = MinoType::I;
+	m_random = rdt(mt);
 	createColor(m_random);
 }
 
@@ -526,30 +525,12 @@ bool MinoManager::isRotate()
 	testPosX = 0;
 	m_isTest = false;
 
-	//struct indexData
-	//{
-	//	int posX;
-	//	int posY;
-	//};
-
-	//constexpr indexData offset[8] =
-	//{
-	//	{1,0},
-	//	{-1,0},
-	//	{0,1},
-	//	{1,0},
-	//	{1,1},
-	//	{1,-1},
-	//	{-1,1},
-	//	{-1,-1},
-	//};
-
 	for (int y = 3; y >= 0; y--)
 	{
 		for (int x = 0; x < 4; x++)
 		{
 			//ŽŸ‚Ì‰ñ“]æ‚Ìó‘Ô‚Å”ä‚×‚é
-			if (getRotateMinoData(x, y, m_rotateNum) == 1)
+			if (getRotateMinoData(x, y, m_rotateNum + 1) == 1)
 			{
 				int posX = x + m_indexX;
 				int posY = y + m_indexY;
@@ -557,18 +538,34 @@ bool MinoManager::isRotate()
 				if (m_pMap->isBlock(posX, posY))
 				{
 					return false;
+					//if (m_pMap->isBlock(m_indexX - 1, m_indexY))
+					//{
+					//	return false;
+					//}
+					//else
+					//{
+					//	m_indexX += -1;
+					//}
 				}
 				//‰æ–ÊŠO
 				if (posX < 0)
 				{
-					return false;
+					testPosX = posX - 0;
+					testPosX *= -1;
+					m_isTest = true;
+//					return false;
 				}
 				if (posX > Map::kMapX - 1)
 				{	
-			//(‰¼) m_indexX‚ª7‚Åx = 3(4x4‚Ìˆê”Ô‰E)‚Ìê‡10‚É‚È‚é
-					testPosX = posX - Map::kMapX - 1;
-					m_indexX += testPosX;
+					testPosX = posX - (Map::kMapX - 1);
+					testPosX *= -1;
+					/*if (m_pMap->isBlock(m_indexX + testPosX, posY))
+					{
+						return false;
+					}*/				
 					m_isTest = true;
+
+					//return false;
 				}
 			}
 		}
@@ -613,7 +610,7 @@ bool MinoManager::testTypeAndIsThere(int x, int y)
 int MinoManager::getRotateMinoData(int x, int y,int rotateNum)
 {
 	int data = 0;
-	if (rotateNum == 0)
+	if (rotateNum == 4)
 	{
 		data = m_minoData[m_random].shape[y][x];
 	}

@@ -19,10 +19,11 @@ void Map::init()
 			m_map[x][y] = 0;
 		}
 	}
-	for (int y = 8; y < kMapY; y++)
+	/*for (int y = 8; y < kMapY; y++)
 	{
 		m_map[7][y] = 1;
-	}
+		m_map[1][y] = 1;
+	}*/
 }
 
 void Map::update()
