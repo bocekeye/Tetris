@@ -232,7 +232,7 @@ void MinoManager::init()
 
 void MinoManager::update()
 {
-	/*if (m_fallInterval++ >= 60)
+	if (m_fallInterval++ >= 60)
 	{
 		if (isMoveBelow())
 		{
@@ -255,7 +255,7 @@ void MinoManager::update()
 			create();
 		}
 		m_fallInterval = 0;
-	}*/
+	}
 
 
 	if (Pad::isTrigger(PAD_INPUT_DOWN))
@@ -300,31 +300,22 @@ void MinoManager::update()
 	//回転
 	if (Pad::isTrigger(PAD_INPUT_UP))
 	{
-#if false
-		if (!isHit(m_indexX, m_indexY, m_rotateNum))
-		{
-			m_rotateNum += 1;
-		}
-
-		if (m_rotateNum > 3)
-		{
-			m_rotateNum = 0;
-		}
-#else
-	
 		if (isRotate())
 		{
 			if (m_isTest)
 			{
-				m_indexX += testPosX;
+				m_indexX += m_testPosX;
 			}
 			m_rotateNum += 1;
+		}
+		else
+		{
+
 		}
 		if (m_rotateNum > 3)
 		{
 			m_rotateNum = 0;
 		}
-#endif
 	}
 
 	if (Pad::isTrigger(PAD_INPUT_10))
@@ -391,7 +382,7 @@ void MinoManager::draw()
 	DrawFormatString(500, 120, 0xffffff, "m_indexY = %d", m_indexY);
 	DrawFormatString(500, 140, 0xffffff, "m_random = %d", m_random);
 	DrawFormatString(500, 160, 0xffffff, "m_rotateNum = %d", m_rotateNum);
-	DrawFormatString(500, 180, 0xffffff, "testPosX = %d", testPosX);
+	DrawFormatString(500, 180, 0xffffff, "testPosX = %d", m_testPosX);
 
 	if (isRotate())
 	{
@@ -561,7 +552,7 @@ bool MinoManager::isRotate()
 	int kariPosY = 0;
 	int testX = 0; 
 	int testY = 0;
-	testPosX = 0;
+	m_testPosX = 0;
 	m_isTest = false;
 
 	struct indexData
@@ -570,7 +561,7 @@ bool MinoManager::isRotate()
 		int indexY;
 	};
 
-	constexpr indexData offset[8] =
+	constexpr indexData offset[12] =
 	{
 		//一個先
 		{1,0},	//右
@@ -582,6 +573,11 @@ bool MinoManager::isRotate()
 		{0,2},	//下
 		{-2,0},	//左
 		{0,-2},	//上
+		//3個先
+		{3,0},	//右
+		{0,3},	//下
+		{-3,0},	//左
+		{0,-3},	//上
 	};
 
 	for (int x = 0; x < 4; x++)
@@ -596,35 +592,27 @@ bool MinoManager::isRotate()
 				//画面外
 				if (posX < 0)
 				{
-					testPosX = posX - 0;
-					testPosX *= -1;
+					m_testPosX = posX - 0;
+					m_testPosX *= -1;
 					m_isTest = true;
-					//					return false;
+					//return false;
 				}
 				if (posX > Map::kMapX - 1)
 				{
-					testPosX = posX - (Map::kMapX - 1);
-					testPosX *= -1;
-					/*if (m_pMap->isBlock(m_indexX + testPosX, posY))
-					{
-						return false;
-					}*/
+					m_testPosX = posX - (Map::kMapX - 1);
+					m_testPosX *= -1;
 					m_isTest = true;
-
-					//return false;
 				}
 
-			//	if (posX > Map::kMapX - 1) return false;
-			//	if (posX < 0)			   return false;
-
 				//次のミノの状態でブロックがあるかどうか
-				//全方向を見る
+				//全方向を見て回転できるかどうか
 				if (m_pMap->isBlock(posX, posY))
 				{
 					for (auto& ofs : offset)
 					{
-						int testPosX = posX + ofs.indexX ;
-						int testPosY = posY + ofs.indexY ;
+						int testPosX = posX + ofs.indexX;
+						int testPosY = posY + ofs.indexY;
+						m_isTest = false;
 						//画面外
 						if (testPosX > Map::kMapX - 1)
 						{
@@ -634,6 +622,7 @@ bool MinoManager::isRotate()
 						{
 							continue;
 						}
+						//ブロックがあったら回転できない
 						if (m_pMap->isBlock(testPosX, testPosY))
 						{
 							return false;
@@ -644,16 +633,6 @@ bool MinoManager::isRotate()
 						}
 					}
 				}
-				
-				//ブロックがある場合
-			/*	if (posY < 0)
-				{
-					return false;
-				}
-				if (posX < 0)
-				{
-					return false;
-				}*/
 			}
 		}
 	}

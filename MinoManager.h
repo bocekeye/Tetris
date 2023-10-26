@@ -101,5 +101,5 @@ private:
 	bool m_isTest = false;
 	bool m_isFallContinue = false;
 
-	int testPosX = 0;
+	int m_testPosX = 0;
 };
