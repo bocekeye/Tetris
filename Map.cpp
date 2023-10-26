@@ -21,7 +21,7 @@ void Map::init()
 	}
 	for (int y = 8; y < kMapY; y++)
 	{
-		m_map[7][y] = 1;
+	//	m_map[7][y] = 1;
 //		m_map[1][y] = 1;
 	}
 }

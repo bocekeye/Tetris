@@ -33,6 +33,8 @@ public:
 
 	bool isRotate();
 
+	bool isHit(int minoX, int minoY, int minoAngle);
+
 	void createColor(int randomNum);
 
 
@@ -68,6 +70,7 @@ public:
 		int shape180[4][4];
 		int shape270[4][4];
 	};
+
 
 
 	//int m_minoNum;				//ミノの生成のナンバー
