@@ -29,14 +29,22 @@ public:
 
 	bool testTypeAndIsThere(int x, int y);
 
+	//指定した場所の回転した情報を取得する
 	int getRotateMinoData(int x, int y, int rotateNum);
 
-	bool isRotate();
+	//回転できるかどうか
+//	bool isRotate();
 
-	bool isHit(int minoX, int minoY, int minoAngle);
-
+	//色の生成
 	void createColor(int randomNum);
 
+//	bool test(int testX, int testY);
+
+//	bool test2(int x, int y);
+
+	bool  isRotate(int indexX,int indexY);
+
+	bool test3(int indexX, int indexY,int rotateNum);
 
 public:
 
@@ -71,6 +79,13 @@ public:
 		int shape270[4][4];
 	};
 
+	enum RotateAngle : int 
+	{
+		shape0,
+		shape90,
+		shape180,
+		shape270
+	};
 
 
 	//int m_minoNum;				//ミノの生成のナンバー
@@ -102,4 +117,6 @@ private:
 	bool m_isFallContinue = false;
 
 	int m_testPosX = 0;
+
+	bool m_next = false;
 };

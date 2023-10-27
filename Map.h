@@ -18,6 +18,7 @@ public:
 	void lower();
 
 	void getColor(int color);
+	void setColor(int x, int y);
 
 public:
 	static const int kMapX = 10;		//‰¡
