@@ -15,15 +15,21 @@ public:
 	void erase();
 
 	//下に落とす
-	void lower();
+	void lower(int strageY);
+
+	void testColor(int x, int y);
 
 	void getColor(int color);
-	void setColor(int x, int y);
+//	void setColor(int x, int y);
 
 public:
 	static const int kMapX = 10;		//横
 	static const int kMapY = 20;		//縦
-	static const int kMapSize = 30;		//1つのマップチップのサイズ
+	static const int kMapSize = 40;		//1つのマップチップのサイズ
+
+	//どこから表示させるか
+	static const int kDisplayX = 400;
+	static const int kDisplayY = 100;
 
 private:
 	int m_map[kMapX][kMapY];

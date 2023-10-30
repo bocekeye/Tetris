@@ -26,9 +26,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	MinoManager* mino;
 	mino = new MinoManager;
-	mino->init();
+
 	Map* map;
 	map = new Map;
+
+	mino->setMap(map);
+	mino->init();
 	map->init();
 
 	while (ProcessMessage() == 0)
@@ -40,7 +43,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		
 		Pad::update();
 
-		mino->setMap(map);
+
 
 		mino->update();
 		mino->draw();

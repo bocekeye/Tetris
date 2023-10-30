@@ -21,10 +21,11 @@ Map::~Map()
 void Map::init()
 {
 
-	for (int y = 8; y < kMapY; y++)
+	for (int x = 0; x < kMapX - 1; x++)
 	{
 	//	m_map[7][y] = 1;
 //		m_map[1][y] = 1;
+	//	m_map[x][19] = 1;
 	}
 }
 
@@ -39,16 +40,19 @@ void Map::draw()
 	{
 		for (int y = 0; y < kMapY; y++)
 		{
-			if (m_map[x][y] == 1)
+			if (m_map[x][y] != 0)
 			{
-				int posX = x * kMapSize;
-				int posY = y * kMapSize;
+				/*int posX = x * kMapSize;
+				int posY = y * kMapSize;*/
+				testColor(x, y);
 
-				DrawBox(posX + 100, posY + 100, posX + kMapSize + 100, posY + 100 + kMapSize, 0xffffff, true);
+				//DrawBox(posX + 100, posY + 100, posX + kMapSize + 100, posY + 100 + kMapSize, 0xffffff, true);
 			}
 
-			int Frame = kMapSize + 1;
-			DrawBox(100,100,x * kMapSize + kMapSize + 100,y * kMapSize + kMapSize + 100,0xffffff,false);
+			//òg
+			int frameX = x * kMapSize + kDisplayX;
+			int frameY = y * kMapSize + kDisplayY;
+			DrawBox(frameX, frameY, frameX + kMapSize,frameY + kMapSize, 0xffffff, false);
 		}
 	}
 
@@ -63,7 +67,7 @@ void Map::draw()
 /// <returns>true : Ç†ÇÈÅ@false : Ç»Ç¢</returns>
 bool Map::isBlock(int x, int y)
 {
-	if (m_map[x][y] == 1)
+	if (m_map[x][y] != 0)
 	{
 		return true;
 	}
@@ -72,7 +76,7 @@ bool Map::isBlock(int x, int y)
 
 void Map::setBlock(int x, int y,int color)
 {
-	m_map[x][y] = 1;
+	m_map[x][y] = color;
 	//m_color = color;
 }
 
@@ -86,10 +90,9 @@ void Map::erase()
 		m_count = 0;
 		for (int x = 0; x < Map::kMapX; x++)
 		{
-			if (m_map[x][y] == 1)
+			if (m_map[x][y] != 0)
 			{
 				m_count += 1;
-			//	printfDx("%d\n", m_count);
 				if (m_count == 10)
 				{
 					m_isLineUP = true;
@@ -101,38 +104,65 @@ void Map::erase()
 	//àÍóÒëµÇ¡ÇΩÇÁÇªÇÃóÒÇè¡Ç∑
 	if (m_isLineUP)
 	{
-		for (int x = 0; x < Map::kMapX; x++)
-		{
-			m_map[x][strageY] = 0;
-		}
-		lower();
+		lower(strageY);
 		m_isLineUP = false;
 	}
 	
 }
 
-void Map::lower()
+void Map::lower(int strageY)
 {
-	for (int y = Map::kMapY - 2; y > 0; y--)
+	for (int y = strageY; y > 0; y--)
 	{
 		for (int x = 0; x < Map::kMapX; x++)
 		{
-			if (m_map[x][y] == 1)
-			{
-				if (m_map[x][y + 1] == 0)
-				{
-					m_map[x][y] = 0;
-					m_map[x][y + 1] = 1;
-				}
-			}
+			//óÒÇ™ÇªÇÎÇ¡ÇΩÇ∆Ç±ÇÎÇÃÉ~ÉmÇè¡Ç∑
+			m_map[x][y] = 0;
+			//àÍíiâ∫Ç∞ÇÈ
+			m_map[x][y] = m_map[x][y - 1];
 		}
+	}
+
+}
+
+void Map::testColor(int x, int y)
+{
+	int posX = (x * kMapSize) + kDisplayX;
+	int posY = (y * kMapSize) + kDisplayY;
+	if (m_map[x][y] == 1)
+	{
+		DrawBox(posX , posY, posX + kMapSize, posY + kMapSize, 0xa260bf, true);
+	}
+	else if (m_map[x][y] == 2)
+	{
+		DrawBox(posX, posY , posX + kMapSize , posY + kMapSize, 0xfd7e00, true);
+	}
+	else if (m_map[x][y] == 3)
+	{
+		DrawBox(posX, posY , posX + kMapSize , posY+ kMapSize, 0x0000ff, true);
+	}
+	else if (m_map[x][y] == 4)
+	{
+		DrawBox(posX, posY , posX + kMapSize , posY + kMapSize, 0x00ffff, true);
+	}
+	else if (m_map[x][y] == 5)
+	{
+		DrawBox(posX, posY , posX + kMapSize , posY + kMapSize, 0xffff00, true);
+	}
+	else if (m_map[x][y] == 6)
+	{
+		DrawBox(posX, posY , posX + kMapSize, posY + kMapSize, 0x00ff00, true);
+	}
+	else if (m_map[x][y] == 7)
+	{
+		DrawBox(posX, posY , posX + kMapSize, posY + kMapSize, 0xff0000, true);
 	}
 }
 
 void Map::getColor(int color)
 {
 	DrawFormatString(700, 100, 0xffffff, "%d", color);
-	/*if (color == 1)
+	if (color == 1)
 	{
 		m_color = 0xa260bf;
 	}
@@ -159,8 +189,8 @@ void Map::getColor(int color)
 	else if (color == 7)
 	{
 		m_color = 0xff0000;
-	}*/
-	m_color = color;
+	}
+	//m_color = color;
 }
 
 //void Map::setColor(int x, int y)

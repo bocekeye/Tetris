@@ -36,7 +36,7 @@ public:
 //	bool isRotate();
 
 	//色の生成
-	void createColor(int randomNum);
+	int createColor(int randomNum);
 
 //	bool test(int testX, int testY);
 
@@ -45,6 +45,11 @@ public:
 	bool  isRotate(int indexX,int indexY);
 
 	bool test3(int indexX, int indexY,int rotateNum);
+
+	void changeMino(int x, int y,bool isThere);
+
+	//下に落とすときの表示
+	void putDisplayLower();
 
 public:
 
@@ -108,10 +113,12 @@ private:
 
 	int m_count;				//1列にミノが何個あるかの数
 	int m_random;				//生成されたランダムの数
+	int m_nextRandom;			//次のミノのランダムの数
 
 	int m_rotateNum;			//回転状態用の数
 
 	int m_color;				//色
+	int m_nextColor;
 
 	bool m_isTest = false;
 	bool m_isFallContinue = false;
@@ -119,4 +126,14 @@ private:
 	int m_testPosX = 0;
 
 	bool m_next = false;
+
+	int m_display = 1;
+
+	bool m_isFallDisplay = false;
+
+
+	int m_holdColor = 0;
+	int m_holdMap[4][4];
+	bool m_isHoldEnable;		//ホールドできるかどうか
+	bool m_isHoldFirst;			//一番最小のホールドをしたかどうか
 };

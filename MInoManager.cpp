@@ -14,8 +14,17 @@ MinoManager::MinoManager() :
 	m_count(0),
 	m_random(0),
 	m_rotateNum(0),
-	m_color(0)
+	m_color(0),
+	m_isHoldEnable(false),
+	m_isHoldFirst(false)
 {
+	for (int x = 0; x < 4; x++)
+	{
+		for (int y = 0; y < 4; y++)
+		{
+			m_holdMap[x][y] = 0;
+		}
+	}
 }
 
 void MinoManager::init()
@@ -233,7 +242,7 @@ void MinoManager::init()
 
 void MinoManager::update()
 {
-	/*if (m_fallInterval++ >= 60)
+	if (m_fallInterval++ >= 120)
 	{
 		if (isMoveBelow())
 		{
@@ -249,14 +258,14 @@ void MinoManager::update()
 					{
 						int posX = x + m_indexX;
 						int posY = y + m_indexY;
-						m_pMap->setBlock(posX, posY, m_random);
+						m_pMap->setBlock(posX, posY, m_random + 1);
 					}
 				}
 			}
 			create();
 		}
 		m_fallInterval = 0;
-	}*/
+	}
 
 
 	if (Pad::isTrigger(PAD_INPUT_DOWN))
@@ -275,7 +284,7 @@ void MinoManager::update()
 					{
 						int posX = x + m_indexX;
 						int posY = y + m_indexY;
-						m_pMap->setBlock(posX, posY, m_random);
+						m_pMap->setBlock(posX, posY, m_random + 1);
 					}
 				}
 			}
@@ -307,6 +316,7 @@ void MinoManager::update()
 		}
 		else
 		{
+			//1つ先を見て回転できるか確認する
 			if (test3(m_indexX + 1, m_indexY, m_rotateNum))
 			{
 				m_indexX += 1;
@@ -320,10 +330,27 @@ void MinoManager::update()
 			else if (test3(m_indexX - 1, m_indexY, m_rotateNum))
 			{
 				m_rotateNum += 1;
+				if (m_random == MinoType::I)
+				{
+					m_indexX -= 1;
+				}
 			}
 			else if (test3(m_indexX - 2, m_indexY, m_rotateNum))
 			{
-				m_indexX -= 1;
+				if (m_random == MinoType::I)
+				{
+					m_indexX -= 2;
+				}
+				else
+				{
+					m_indexX -= 1;
+
+				}
+				m_rotateNum += 1;
+			}
+			else if (test3(m_indexX - 3, m_indexY, m_rotateNum))
+			{
+				m_indexX -= 2;
 				m_rotateNum += 1;
 			}
 			else if (test3(m_indexX, m_indexY + 1, m_rotateNum))
@@ -336,24 +363,6 @@ void MinoManager::update()
 		{
 			m_rotateNum = 0;
 		}
-
-		//if (isRotate())
-		//{
-		//	if (m_isTest)
-		//	{
-		//		m_indexX += m_testPosX;
-		//	}
-		//	m_rotateNum += 1;
-		//}
-		////現在：隣にミノがあった時回転できない
-		//else
-		//{
-
-		//}
-		//if (m_rotateNum > 3)
-		//{
-		//	m_rotateNum = 0;
-		//}
 	}
 
 	if (Pad::isTrigger(PAD_INPUT_10))
@@ -377,7 +386,7 @@ void MinoManager::update()
 					{
 						int posX = x + m_indexX;
 						int posY = y + m_indexY;
-						m_pMap->setBlock(posX, posY, m_random);
+						m_pMap->setBlock(posX, posY, m_random + 1);
 					}
 				}
 			}
@@ -387,18 +396,87 @@ void MinoManager::update()
 		}
 	}
 
-	m_pMap->erase();
-	//0を空白にするために+1する
-	m_pMap->getColor(m_random);
-	//m_pMap->getColor(m_random + 1);
+	//ホールド
+	//ミノを設置したらホールドを1回できるようにする
+#if false
+	if (m_isHoldEnable)
+	{
+		if (Pad::isTrigger(PAD_INPUT_1))
+		{
+			//現在生成されているミノを保存(?)する
+			int strageMap[4][4];
+			//MinoData strageMap[MinoMax];
 
-#if _DEBUG
-	//if (isRotate())
-	//{
-	//	m_isTest = false; 
-	//}
+			for (int x = 0; x < 4; x++)
+			{
+				for (int y = 0; y < 4; y++)
+				{
+					strageMap[x][y] = 0;
+				}
+			}
 
+			for (int x = 0; x < 4; x++)
+			{
+				for (int y = 0; y < 4; y++)
+				{
+					if (m_holdMap[x][y] == 1)
+					{
+						strageMap[x][y] = 1;
+						m_holdMap[x][y] = 0;
+					}
+					else 
+					{
+						strageMap[x][y] = 0;
+					}
+				}
+			}
+
+			for (int x = 0; x < 4; x++)
+			{
+				for (int y = 0; y < 4; y++)
+				{
+					if (testTypeAndIsThere(x, y))
+					{
+						m_holdMap[x][y] = 1;
+					}
+					else
+					{
+						m_holdMap[x][y] = 0;
+					}
+				}
+			}	
+			for (int x = 0; x < 4; x++)
+			{
+				for (int y = 0; y < 4; y++)
+				{
+					if (strageMap[x][y] == 1)
+					{
+						changeMino(x, y,true);
+					}
+					else
+					{
+						changeMino(x, y, false);
+					}
+				}
+			}
+			//色の保存
+			m_holdColor = m_color;
+			//一度ホールドされた場合はホールドできないようにする
+			m_isHoldEnable = false;	
+			//一番最初はホールドされていないので
+			//ホールドされたら新しいミノを生成する
+			if (!m_isHoldFirst)
+			{
+				create();
+			}
+			m_isHoldFirst = true;
+		}
+
+	}
 #endif
+
+	m_pMap->erase();
+
 }
 
 void MinoManager::draw()
@@ -410,19 +488,56 @@ void MinoManager::draw()
 			//本体
 			if (testTypeAndIsThere(x, y))
 			{
-				int posX = (m_indexX + x) * Map::kMapSize;
-				int posY = (m_indexY + y) * Map::kMapSize;
-				DrawBox(posX + 100, posY + 100, posX + Map::kMapSize + 100, posY + 100 + Map::kMapSize, m_color, true);
+				int posX = (m_indexX + x) * Map::kMapSize + Map::kDisplayX;
+				int posY = (m_indexY + y) * Map::kMapSize + Map::kDisplayY;
+				DrawBox(posX , posY, posX + Map::kMapSize, posY + Map::kMapSize, m_color, true);
 			}
+
+			if (m_minoData[m_nextRandom].shape[y][x] == 1)
+			{
+				//次のミノ
+				int nextMinoPosX = 500 + x * Map::kMapSize + Map::kDisplayX;
+				int nextMinoPosY = 300 + y * Map::kMapSize + Map::kDisplayY;
+				DrawBox(nextMinoPosX, nextMinoPosY , nextMinoPosX + Map::kMapSize , nextMinoPosY + Map::kMapSize, m_nextColor, true);
+			}
+
+			if (m_holdMap[x][y] == 1)
+			{
+				//ホールドミノ
+				int holdMinoPosX = (x * Map::kMapSize) + 100;
+				int holdMinoPosY = 100 + y * Map::kMapSize + Map::kDisplayY;
+				DrawBox(holdMinoPosX, holdMinoPosY, holdMinoPosX + Map::kMapSize, holdMinoPosY + Map::kMapSize, m_holdColor, true);
+			}
+
+
+
+
+			//枠
+			int nextFrameX = 500 + x * Map::kMapSize + Map::kDisplayX;
+			int nextFrameY = 300 + y * Map::kMapSize + Map::kDisplayY;
+			DrawBox(nextFrameX, nextFrameY, nextFrameX + Map::kMapSize, nextFrameY + Map::kMapSize, 0xffffff, false);
+
+
+			int holdFrameX = 100 + (x * Map::kMapSize);
+			int holdFrameY = 100 + (y * Map::kMapSize) + Map::kDisplayY;
+			DrawBox(holdFrameX, holdFrameY, holdFrameX + Map::kMapSize, holdFrameY + Map::kMapSize, 0xffffff, false);
+
 		}
 	}
 
+	putDisplayLower();
+
+	DrawString(510 + Map::kDisplayX, 350, "NEXT BLOCK",0xffffff, true);
+
+	DrawString(900, 750, "上ボタンで回転", 0xffffff, true);
+	DrawString(900, 850, "1ボタンでホールド", 0xffffff, true);
+
 #ifdef _DEBUG
 
-	DrawFormatString(500, 100, 0xffffff, "m_indexX = %d", m_indexX);
+	/*DrawFormatString(500, 100, 0xffffff, "m_display = %d", m_display);
 	DrawFormatString(500, 120, 0xffffff, "m_indexY = %d", m_indexY);
 	DrawFormatString(500, 140, 0xffffff, "m_random = %d", m_random);
-	DrawFormatString(500, 160, 0xffffff, "m_rotateNum = %d", m_rotateNum);
+	DrawFormatString(500, 160, 0xffffff, "m_nextRandom = %d", m_nextRandom);
 	DrawFormatString(500, 180, 0xffffff, "testPosX = %d", m_testPosX);
 
 	if (isRotate(m_indexX,m_indexY))
@@ -440,7 +555,7 @@ void MinoManager::draw()
 	else
 	{
 		DrawString(500, 220, "m_isTest = FALSE", 0xffffff);
-	}
+	}*/
 
 #endif
 }
@@ -455,15 +570,22 @@ void MinoManager::create()
 	m_indexX = 4;
 	m_indexY = 0;
 	m_rotateNum = 0;
-	//m_random = MinoType::J;
-	//m_random = MinoType::I;
-	//m_random = MinoType::square;
-	m_random = rdt(mt);
+	m_random = rdt(mt);				//現在のミノ
+	//一回だけ通るようにする
+	//事前に生成した次のミノを生成させる
+	if (m_next)
+	{
+		m_random = m_nextRandom;
+	}
+	m_nextRandom = rdt(mt);			//次のミノ
+	m_next = true;
+	m_isHoldEnable = true;
 	int tempX = 0;
 	int tempY = 0;
 	//一番上にミノがなかったら一段上にあげる
 	while (true)
 	{
+		//1つでも一番上にミノがあったらループをやめる
 		if (m_minoData[m_random].shape[0][tempY] == 1)
 		{
 			break;
@@ -490,7 +612,10 @@ void MinoManager::create()
 		}
 	}
 	//ランダムの数から色を生成する
-	createColor(m_random);
+	m_color = createColor(m_random);
+	m_nextColor = createColor(m_nextRandom);
+	//色情報を取得する
+	m_pMap->getColor(m_random);
 }
 
 /// <summary>
@@ -743,36 +868,39 @@ int MinoManager::getRotateMinoData(int x, int y,int rotateNum)
 	return data;
 }
 
-void MinoManager::createColor(int randomNum)
+int MinoManager::createColor(int randomNum)
 {
+	int color = 0;
 	if (randomNum == MinoType::T)			//紫
 	{
-		m_color = 0xa260bf;
+		color = 0xa260bf;
 	}
 	else if (randomNum == MinoType::L)		//オレンジ
 	{
-		m_color = 0xfd7e00;
+		color = 0xfd7e00;
 	}
 	else if (randomNum == MinoType::J)		//青
 	{
-		m_color = 0x0000ff;
+		color = 0x0000ff;
 	}
 	else if (randomNum == MinoType::I)		//水色
 	{
-		m_color = 0x00ffff;
+		color = 0x00ffff;
 	}
 	else if (randomNum == MinoType::square)	//黄色
 	{
-		m_color = 0xffff00;
+		color = 0xffff00;
 	}
 	else if (randomNum == MinoType::S)	//緑
 	{
-		m_color = 0x00ff00;
+		color = 0x00ff00;
 	}
 	else if (randomNum == MinoType::Z)	//赤
 	{
-		m_color = 0xff0000;
+		color = 0xff0000;
 	}
+
+	return color;
 }
 
 /// <summary>
@@ -817,7 +945,6 @@ bool MinoManager::isRotate(int indexX, int indexY)
 
 bool MinoManager::test3(int indexX, int indexY, int rotateNum)
 {
-	
 	for (int x = 0; x < 4; x++)
 	{
 		for (int y = 0; y < 4; y++)
@@ -847,6 +974,77 @@ bool MinoManager::test3(int indexX, int indexY, int rotateNum)
 	}
 
 	return true;
+}
+
+void MinoManager::changeMino(int x, int y, bool isThere)
+{
+	if (isThere)
+	{
+		
+		{
+			m_minoData[m_random].shape[y][x] = 1;
+		}
+		
+		{
+			m_minoData[m_random].shape90[y][x] = 1;
+		}
+	
+		{
+			m_minoData[m_random].shape180[y][x] = 1;
+		}
+		
+		{
+			m_minoData[m_random].shape270[y][x] = 1;
+		}
+	}
+	else
+	{
+	
+		{
+			m_minoData[m_random].shape[y][x] = 0;
+		}
+	
+		{
+			m_minoData[m_random].shape90[y][x] =0;
+		}
+		
+		{
+			m_minoData[m_random].shape180[y][x] = 0;
+		}
+		
+		{
+			m_minoData[m_random].shape270[y][x] = 0;
+		}
+	}
+	
+}
+
+void MinoManager::putDisplayLower()
+{
+	if (m_isFallDisplay)
+	{
+		if (isMoveBelow())
+		{
+			m_display++;
+		}
+		else
+		{
+			for (int x = 0; x < 4; x++)
+			{
+				for (int y = 0; y < 4; y++)
+				{
+					if (testTypeAndIsThere(x, y))
+					{
+						int posX = (x + m_indexX) * Map::kMapSize + Map::kDisplayX;
+						int posY = (y + m_display) * Map::kMapSize + Map::kDisplayY;
+						DrawBox(posX, posY, posX + Map::kMapSize, posY + Map::kMapSize, m_color, true);
+					}
+				}
+			}
+			//
+			m_isFallDisplay = false;
+		}
+	}
 }
 
 //bool MinoManager::test(int testX, int testY)
