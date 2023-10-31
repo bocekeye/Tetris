@@ -3,7 +3,8 @@
 #include <DxLib.h>
 
 Map::Map():
-	m_color(0)
+	m_color(0),
+	m_count(0)
 {
 	for (int x = 0; x < kMapX; x++)
 	{
@@ -20,13 +21,6 @@ Map::~Map()
 
 void Map::init()
 {
-
-	for (int x = 0; x < kMapX - 1; x++)
-	{
-	//	m_map[7][y] = 1;
-//		m_map[1][y] = 1;
-	//	m_map[x][19] = 1;
-	}
 }
 
 void Map::update()

@@ -9,12 +9,9 @@ public:
 	MinoManager();
 	virtual ~MinoManager(){}
 
-
 	void init();
 	void update();
 	void draw();
-
-	//void create();
 
 	void setMap(Map* map) { m_pMap = map; }
 
@@ -22,34 +19,26 @@ public:
 	void create();
 
 	//1個下にブロックがあるかどうか
-	bool isMoveBelow();
+	bool isMoveBelow(int indexY);
 	bool isMoveRight();
 	bool isMoveLeft();
-
 
 	bool testTypeAndIsThere(int x, int y);
 
 	//指定した場所の回転した情報を取得する
 	int getRotateMinoData(int x, int y, int rotateNum);
 
-	//回転できるかどうか
-//	bool isRotate();
 
 	//色の生成
 	int createColor(int randomNum);
 
-//	bool test(int testX, int testY);
-
-//	bool test2(int x, int y);
-
-	bool  isRotate(int indexX,int indexY);
+	bool isRotate(int indexX,int indexY);
 
 	bool test3(int indexX, int indexY,int rotateNum);
 
-	void changeMino(int x, int y,bool isThere);
-
 	//下に落とすときの表示
 	void putDisplayLower();
+	bool isDisplay(int display);
 
 	void isGameOver(int x, int y);
 
@@ -98,6 +87,7 @@ public:
 	//int m_minoNum;				//ミノの生成のナンバー
 
 	MinoData m_minoData[MinoMax];
+//	MinoData m_strageData[MinoMax];
 
 private:
 
@@ -138,6 +128,12 @@ private:
 	int m_holdMap[4][4];
 	bool m_isHoldEnable;		//ホールドできるかどうか
 	bool m_isHoldFirst;			//一番最小のホールドをしたかどうか
+	int m_holdType;				//ホールドした形を保存
 
 	bool m_isGameOver;			//ゲーム終了かどうか
+
+	bool m_isHold = false;
+	bool m_isOnce = false;
+
+	int m_testY = 0;
 };

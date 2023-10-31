@@ -156,12 +156,14 @@
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MInoManager.cpp" />
     <ClCompile Include="Pad.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MinoManager.h" />
     <ClInclude Include="Pad.h" />
+    <ClInclude Include="SceneManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
