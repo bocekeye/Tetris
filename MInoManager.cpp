@@ -859,7 +859,7 @@ bool MinoManager::test3(int indexX, int indexY, int rotateNum)
 {
 	for (int x = 0; x < 4; x++)
 	{
-		for (int y = 0; y < 4; y++)
+		for (int y = 3; y >= 0; y--)
 		{
 			int posX = x + indexX;
 			int posY = y + indexY;
@@ -898,6 +898,7 @@ void MinoManager::putDisplayLower()
 	}
 	else
 	{
+		int temp = m_display;
 		for (int x = 0; x < 4; x++)
 		{
 			for (int y = 0; y < 4; y++)
@@ -905,7 +906,7 @@ void MinoManager::putDisplayLower()
 				if (testTypeAndIsThere(x, y))
 				{
 					int posX = (x + m_indexX) * Map::kMapSize + Map::kDisplayX;
-					int posY = (m_indexY + y + m_display) * Map::kMapSize + Map::kDisplayY;
+					int posY = (m_indexY + y + temp) * Map::kMapSize + Map::kDisplayY;
 					int color = createColor(m_random);
 					SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128); // 128‚Í“§–¾“x‚Ì’li0‚©‚ç255‚Ü‚Å‚Ì”ÍˆÍ
 					DrawBox(posX, posY, posX + Map::kMapSize, posY + Map::kMapSize, color, true);
@@ -916,7 +917,7 @@ void MinoManager::putDisplayLower()
 		m_display = 0;
 	}
 
-	printfDx("%d\n", m_testY);
+	printfDx("%d\n", m_display);
 
 
 }
