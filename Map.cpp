@@ -161,7 +161,6 @@ void Map::testColor(int x, int y)
 
 void Map::getColor(int color)
 {
-	DrawFormatString(700, 100, 0xffffff, "%d", color);
 	if (color == 1)
 	{
 		m_color = 0xa260bf;

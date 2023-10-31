@@ -16,7 +16,8 @@ MinoManager::MinoManager() :
 	m_rotateNum(0),
 	m_color(0),
 	m_isHoldEnable(false),
-	m_isHoldFirst(false)
+	m_isHoldFirst(false),
+	m_isGameOver(false)
 {
 	for (int x = 0; x < 4; x++)
 	{
@@ -259,6 +260,7 @@ void MinoManager::update()
 						int posX = x + m_indexX;
 						int posY = y + m_indexY;
 						m_pMap->setBlock(posX, posY, m_random + 1);
+						isGameOver(posX, posY);
 					}
 				}
 			}
@@ -285,6 +287,7 @@ void MinoManager::update()
 						int posX = x + m_indexX;
 						int posY = y + m_indexY;
 						m_pMap->setBlock(posX, posY, m_random + 1);
+						isGameOver(posX, posY);
 					}
 				}
 			}
@@ -387,6 +390,7 @@ void MinoManager::update()
 						int posX = x + m_indexX;
 						int posY = y + m_indexY;
 						m_pMap->setBlock(posX, posY, m_random + 1);
+						isGameOver(posX, posY);
 					}
 				}
 			}
@@ -475,6 +479,13 @@ void MinoManager::update()
 	}
 #endif
 
+	//ƒQ[ƒ€I—¹
+	if (m_isGameOver)
+	{
+		DrawFormatString(300, 300, 0xffffff, "GAME OVER");
+	}
+	
+
 	m_pMap->erase();
 
 }
@@ -508,9 +519,6 @@ void MinoManager::draw()
 				int holdMinoPosY = 100 + y * Map::kMapSize + Map::kDisplayY;
 				DrawBox(holdMinoPosX, holdMinoPosY, holdMinoPosX + Map::kMapSize, holdMinoPosY + Map::kMapSize, m_holdColor, true);
 			}
-
-
-
 
 			//˜g
 			int nextFrameX = 500 + x * Map::kMapSize + Map::kDisplayX;
@@ -709,104 +717,6 @@ bool MinoManager::isMoveLeft()
 	}
 	return true;
 }
-#if false
-/// <summary>
-/// ‰ñ“]‚Å‚«‚é‚©‚Ç‚¤‚©
-/// </summary>
-/// <returns>false:‰ñ“]‚Å‚«‚È‚¢ | true:‰ñ“]‚Å‚«‚é</returns>
-bool MinoManager::isRotate()
-{
-	int kariPosX = 0;
-	int kariPosY = 0;
-	int testX = 0; 
-	int testY = 0;
-	m_testPosX = 0;
-	m_isTest = false;
-
-	//constexpr indexData offset[12] =
-	//{
-	//	//ˆêŒÂæ
-	//	{1,0},	//‰E
-	//	{0,1},	//‰º
-	//	{-1,0},	//¶
-	//	{0,-1},	//ã
-	//	//“ñŒÂæ
-	//	{2,0},	//‰E
-	//	{0,2},	//‰º
-	//	{-2,0},	//¶
-	//	{0,-2},	//ã
-	//	//3ŒÂæ
-	//	{3,0},	//‰E
-	//	{0,3},	//‰º
-	//	{-3,0},	//¶
-	//	{0,-3},	//ã
-	//};
-
-
-
-
-	//return true;
-	//for (int x = 0; x < 4; x++)
-	//{
-	//	for (int y = 0; y < 4; y++)
-	//	{
-	//		//Ÿ‚Ì‰ñ“]æ‚Ìó‘Ô‚Å”ä‚×‚é
-	//		if (getRotateMinoData(x, y, m_rotateNum + 1) == 1)
-	//		{
-	//			int posX = x + m_indexX;
-	//			int posY = y + m_indexY;
-	//			//‰æ–ÊŠO
-	//			if (posX < 0)
-	//			{
-	//				//‚Í‚İo‚µ‚½•ª‚ğ•ÛŠÇ‚·‚é¨‚»‚Ì•ª‚ğ‚¸‚ç‚·¨Iƒ~ƒm‚ª1‚Â‚Í‚İo‚éƒoƒO‚É‚È‚Á‚Ä‚¢‚é
-	//				m_testPosX = posX;			
-	//				m_testPosX *= -1;		
-	//				m_isTest = true;
-	//				//return false;
-	//			}
-	//			if (posX > Map::kMapX - 1)
-	//			{
-	//				m_testPosX = posX - (Map::kMapX - 1);
-	//				m_testPosX *= -1;
-	//				m_isTest = true;
-	//			}
-
-	//			//Ÿ‚Ìƒ~ƒm‚Ìó‘Ô‚ÅƒuƒƒbƒN‚ª‚ ‚é‚©‚Ç‚¤‚©
-	//			//‘S•ûŒü‚ğŒ©‚Ä‰ñ“]‚Å‚«‚é‚©‚Ç‚¤‚©
-	//			if (m_pMap->isBlock(posX, posY))
-	//			{
-	//				int nextPosX = posX + 1;
-
-	//				if (!m_pMap->isBlock(posX + 1, posY))
-	//				{
-	//					m_indexX += 1;
-	//				}
-	//				else if (!m_pMap->isBlock(posX - 1, posY))
-	//				{
-	//					m_indexX -= 1;
-	//				}
-	//				else if (!m_pMap->isBlock(posX, posY + 1))
-	//				{
-	//					m_indexY += 1;
-	//				}
-	//				/*if (test(posX,posY))
-	//				{
-	//					return true;
-	//				}
-	//				else
-	//				{
-	//					return false;
-	//				}*/
-	//			}
-	//		}
-	//	}
-	//}
-	//return true;
-
-	return true;
-}
-#endif
-
 bool MinoManager::testTypeAndIsThere(int x, int y)
 {
 	if (m_rotateNum == RotateAngle::shape0)
@@ -904,7 +814,7 @@ int MinoManager::createColor(int randomNum)
 }
 
 /// <summary>
-/// 
+/// ‰ñ“]‚Å‚«‚é‚©‚Ç‚¤‚©
 /// </summary>
 /// <param name="indexX"></param>
 /// <param name="indexY"></param>
@@ -1044,6 +954,14 @@ void MinoManager::putDisplayLower()
 			//
 			m_isFallDisplay = false;
 		}
+	}
+}
+
+void MinoManager::isGameOver(int x, int y)
+{
+	if (y <= 0)
+	{
+ 		m_isGameOver = true;
 	}
 }
 

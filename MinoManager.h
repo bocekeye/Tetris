@@ -51,6 +51,8 @@ public:
 	//下に落とすときの表示
 	void putDisplayLower();
 
+	void isGameOver(int x, int y);
+
 public:
 
 	enum
@@ -136,4 +138,6 @@ private:
 	int m_holdMap[4][4];
 	bool m_isHoldEnable;		//ホールドできるかどうか
 	bool m_isHoldFirst;			//一番最小のホールドをしたかどうか
+
+	bool m_isGameOver;			//ゲーム終了かどうか
 };
