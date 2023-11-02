@@ -1,14 +1,19 @@
-
+#include "SceneManager.h"
+#include "SceneDebug.h"
 #include "Pad.h"
 #include "game.h"
 
 #include "MinoManager.h"
+
 #include "Map.h"
 #include <DxLib.h>
 
 // プログラムは WinMain から始まります
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+	//背景色
+	SetBackgroundColor(128, 128, 128, 1);
+
 	//ウィンドウモード設定
 	ChangeWindowMode(Game::kWindowMode);
 	//ウィンドウモード名設定
@@ -24,7 +29,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//ダブルバッファモード
 	SetDrawScreen(DX_SCREEN_BACK);
 
-	MinoManager* mino;
+	SceneManager sceneManager;
+#ifdef _DEBUG
+	sceneManager.changeScene(new SceneDebug(sceneManager));
+#else
+	sceneManager.changeScene(new SceneTitle(sceneManager));
+#endif
+
+	/*MinoManager* mino;
 	mino = new MinoManager;
 
 	Map* map;
@@ -32,7 +44,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	mino->setMap(map);
 	mino->init();
-	map->init();
+	map->init();*/
 
 	while (ProcessMessage() == 0)
 	{
@@ -43,12 +55,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		
 		Pad::update();
 
+		sceneManager.update();
+		sceneManager.draw();
 
-
-		mino->update();
+		/*mino->update();
 		mino->draw();
 
-		map->draw();
+		map->draw();*/
 
 		//裏画面を表画面を入れ替える
 		ScreenFlip();

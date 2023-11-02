@@ -37,8 +37,8 @@ public:
 	bool test3(int indexX, int indexY,int rotateNum);
 
 	//‰º‚É—Ž‚Æ‚·‚Æ‚«‚Ì•\Ž¦
-	void putDisplayLower();
-	bool isDisplay(int display);
+	void putDisplayLower(int indexY);
+	bool isDisplay(int display, int indexY);
 
 	void isGameOver(int x, int y);
 
@@ -119,7 +119,7 @@ private:
 
 	bool m_next = false;
 
-	int m_display = 1;
+	int m_display = 0;
 
 	bool m_isFallDisplay = false;
 
@@ -136,4 +136,11 @@ private:
 	bool m_isOnce = false;
 
 	int m_testY = 0;
+
+	int m_temp = 0;
+	bool m_isDisplay;
+
+	int m_testPosY = 0;
+
+	int m_blendTimer= 0;
 };

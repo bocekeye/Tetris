@@ -244,11 +244,13 @@ void MinoManager::init()
 
 void MinoManager::update()
 {
+	putDisplayLower(m_indexY);
 	if (m_fallInterval++ >= 120)
 	{
 		if (isMoveBelow(m_indexY))
 		{
 			m_indexY++;
+
 		}
 		else
 		{
@@ -267,9 +269,11 @@ void MinoManager::update()
 			}
 			create();
 		}
+
+		
 		m_fallInterval = 0;
 	}
-
+	
 
 	if (Pad::isTrigger(PAD_INPUT_DOWN))
 	{
@@ -458,7 +462,6 @@ void MinoManager::update()
 			if (!m_isHoldFirst)
 			{
 				create();
-				printfDx("%d\n", m_holdType);
 			}
 			//ホールドされている場合
 			else
@@ -472,6 +475,13 @@ void MinoManager::update()
 		}
 	}
 #endif
+
+
+	if (m_blendTimer++ >= 128)
+	{
+		m_blendTimer = 0;
+	}
+
 
 	//ゲーム終了
 	if (m_isGameOver)
@@ -497,8 +507,6 @@ void MinoManager::draw()
 				DrawBox(posX, posY, posX + Map::kMapSize, posY + Map::kMapSize, color, true);
 				
 			}
-			
-
 			if (m_minoData[m_nextRandom].shape[y][x] == 1)
 			{
 				//次のミノ
@@ -530,13 +538,10 @@ void MinoManager::draw()
 			
 		}
 	}
-	putDisplayLower();
-	
-	
 
 	DrawString(510 + Map::kDisplayX, 350, "NEXT BLOCK",0xffffff, true);
 
-	DrawFormatString(900, 100, 0xfffffff, "m_random = %d", m_random);
+	DrawFormatString(900, 100, 0xfffffff, "m_indexY = %d", m_indexY);
 	DrawFormatString(900, 120, 0xfffffff, "m_holdType = %d", m_holdType);
 
 	DrawString(900, 750, "上ボタンで回転", 0xffffff, true);
@@ -605,7 +610,7 @@ void MinoManager::create()
 		{
 			m_indexY = -1;
 			break;
-		}
+		}		
 	}
 	//一番左にミノがなかったら左に1つずらす
 	while (true)
@@ -881,57 +886,54 @@ bool MinoManager::test3(int indexX, int indexY, int rotateNum)
 			{
 				return false;
 			}
-
 		}
 	}
-
 	return true;
 }
 
-
-
-void MinoManager::putDisplayLower()
+void MinoManager::putDisplayLower(int indexY)
 {		
-	if (isDisplay(m_display))
+	//m_indexYが1ずれるごとに1下にずれてしまう
+
+	if (isDisplay(m_display, indexY))
 	{
 		m_display++;
+		m_isFallDisplay = false;
 	}
 	else
 	{
-		int temp = m_display;
-		for (int x = 0; x < 4; x++)
-		{
-			for (int y = 0; y < 4; y++)
-			{
-				if (testTypeAndIsThere(x, y))
-				{
-					int posX = (x + m_indexX) * Map::kMapSize + Map::kDisplayX;
-					int posY = (m_indexY + y + temp) * Map::kMapSize + Map::kDisplayY;
-					int color = createColor(m_random);
-					SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128); // 128は透明度の値（0から255までの範囲
-					DrawBox(posX, posY, posX + Map::kMapSize, posY + Map::kMapSize, color, true);
-					SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-				}
-			}
-		}
+		m_temp = m_display;
+		m_isFallDisplay = true;
 		m_display = 0;
 	}
 
-	printfDx("%d\n", m_display);
-
-
-}
-
-bool MinoManager::isDisplay(int display)
-{
 	for (int x = 0; x < 4; x++)
 	{
 		for (int y = 0; y < 4; y++)
 		{
 			if (testTypeAndIsThere(x, y))
 			{
+				int posX = (x + m_indexX) * Map::kMapSize + Map::kDisplayX;
+				int posY = (y + m_indexY + m_temp) * Map::kMapSize + Map::kDisplayY;
+				int color = createColor(m_random);
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128); // 128は透明度の値（0から255までの範囲
+				DrawBox(posX, posY, posX + Map::kMapSize, posY + Map::kMapSize, color, true);
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			}
+		}
+	}
+}
+
+bool MinoManager::isDisplay(int display,int indexY)
+{
+	for (int x = 0; x < 4; x++)
+	{
+		for (int y = 3; y >= 0 ; y--)
+		{
+			if (testTypeAndIsThere(x, y))
+			{
 				int posX = m_indexX + x;
-				int posY = m_indexY + y + display;
+				int posY = indexY + y + display;
 
 				//制限
 				if (posY >= Map::kMapY - 1)
@@ -956,8 +958,6 @@ void MinoManager::isGameOver(int x, int y)
  		m_isGameOver = true;
 	}
 }
-
-
 //bool MinoManager::test(int testX, int testY)
 //{
 //	struct indexData
@@ -1007,7 +1007,6 @@ void MinoManager::isGameOver(int x, int y)
 //	
 //	return false;
 //}
-
 //bool MinoManager::test2(int x, int y)
 //{
 //	struct indexData
@@ -1052,8 +1051,6 @@ void MinoManager::isGameOver(int x, int y)
 //	}
 //	return false;
 //}
-
-
 //画面外
 //if (posX < 0)
 //{

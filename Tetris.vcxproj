@@ -156,14 +156,24 @@
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MInoManager.cpp" />
     <ClCompile Include="Pad.cpp" />
+    <ClCompile Include="SceneBase.cpp" />
+    <ClCompile Include="SceneDebug.cpp" />
+    <ClCompile Include="SceneMain.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SceneResult.cpp" />
+    <ClCompile Include="SceneTitle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MinoManager.h" />
     <ClInclude Include="Pad.h" />
+    <ClInclude Include="SceneBase.h" />
+    <ClInclude Include="SceneDebug.h" />
+    <ClInclude Include="SceneMain.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SceneResult.h" />
+    <ClInclude Include="SceneTitle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
